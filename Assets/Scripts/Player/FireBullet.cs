@@ -36,12 +36,11 @@ public class FireBullet : MonoBehaviour
 
     private void Fire()
     {
-        if (bulletPrefab != null && barrelTransform != null)
+        if (barrelTransform != null)
         {
-            GameObject bullet = Instantiate(
-                bulletPrefab,
+            GameObject bullet = BulletPoolManager.Instance.GetBullet(
                 barrelTransform.position,
-                transform.rotation // use player’s current facing direction
+                transform.rotation
             );
         }
     }
