@@ -68,6 +68,12 @@ public class Movement : MonoBehaviour
 
         if (isDashing)
         {
+            dashDirection = GetMoveDirection();
+            if (dashDirection == Vector3.zero)
+            {
+                dashDirection = transform.forward;
+            }
+
             controller.Move(dashDirection * dashSpeed * Time.deltaTime);
             dashTimer -= Time.deltaTime;
 

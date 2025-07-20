@@ -11,6 +11,11 @@ public class SwarmEnemy : MonoBehaviour
     private Transform player;
     private UnityEngine.AI.NavMeshAgent agent;
 
+    private bool playerInRange = false;
+    private float damageCooldown = 1f; // Time between damage ticks
+    private float damageTimer = 0f;
+    private PlayerHealth cachedPlayerHealth;
+
     void Start()
     {
         currentHealth = maxHealth;
@@ -28,6 +33,19 @@ public class SwarmEnemy : MonoBehaviour
         if (player != null && agent != null)
         {
             agent.SetDestination(player.position);
+        }
+
+        if (playerInRange && cachedPlayerHealth != null)
+        {
+            damageTimer -= Time.deltaTime;
+
+            if (damageTimer <= 0f)
+            {
+                cachedPlayerHealth.TakeDamage(contactDamage);
+                Debug.Log($"Enemy damaged player for {contactDamage} (sustained)");
+
+                damageTimer = damageCooldown;
+            }
         }
     }
 
@@ -51,11 +69,22 @@ public class SwarmEnemy : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            // Placeholder damage logic
-            Debug.Log($"Enemy damaged player for {contactDamage} (placeholder)");
+            cachedPlayerHealth = other.GetComponent<PlayerHealth>();
+            if (cachedPlayerHealth != null)
+            {
+                cachedPlayerHealth.TakeDamage(contactDamage); // initial hit
+                damageTimer = damageCooldown; // reset timer after instant hit
+                playerInRange = true;
+            }
+        }
+    }
 
-            // Optionally destroy on contact
-            // Destroy(gameObject);
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            playerInRange = false;
+            cachedPlayerHealth = null;
         }
     }
 }

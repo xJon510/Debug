@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 8d50f0a320e8f5440aa127df5b80f643
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 150233
+  packageName: Mesh Voxelizer
+  packageVersion: 3.1
+  assetPath: Assets/Ice Pond/Mesh Voxelizer/Example/Models/Earth Voxelized.prefab
+  uploadId: 638097
