@@ -11,7 +11,8 @@ public class PlayerHealth : MonoBehaviour
 
     void Start()
     {
-        currentHealth = maxHealth;
+        currentHealth = StatManager.Instance.baseStats.health;
+        maxHealth = StatManager.Instance.baseStats.health;
 
         if (healthSlider != null)
         {
@@ -43,5 +44,14 @@ public class PlayerHealth : MonoBehaviour
     {
         Debug.Log("Player has died!");
         // Add death logic here (disable movement, show game over screen, etc.)
+    }
+
+    public void RefreshUI()
+    {
+        if (healthSlider != null)
+        {
+            healthSlider.maxValue = maxHealth;
+            healthSlider.value = currentHealth;
+        }
     }
 }

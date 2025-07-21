@@ -34,6 +34,10 @@ public class Movement : MonoBehaviour
     void Awake()
     {
         controller = GetComponent<CharacterController>();
+        moveSpeed = StatManager.Instance.baseStats.moveSpeed;
+        dashSpeed = StatManager.Instance.baseStats.dashSpeed;
+        dashDuration = StatManager.Instance.baseStats.dashLength;
+        dashCooldown = StatManager.Instance.baseStats.dashCooldown;
     }
 
     void OnEnable()
