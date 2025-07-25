@@ -1186,7 +1186,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -775.00006, y: -319.99997}
+  m_AnchoredPosition: {x: -775, y: -320}
   m_SizeDelta: {x: -1550, y: -640}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1065543999
@@ -1629,10 +1629,10 @@ MonoBehaviour:
     health: 10
     moveSpeed: 10
     dashSpeed: 40
-    dashLength: 0.2
-    dashCooldown: 1
+    dashLength: 0.1
+    dashCooldown: 5
     fireRate: 0.5
-    damage: 1
+    damage: 2
     critChance: 0
     critMultiplier: 2
     bulletCount: 0

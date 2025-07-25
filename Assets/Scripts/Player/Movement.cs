@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class Movement : MonoBehaviour
 {
@@ -27,6 +28,7 @@ public class Movement : MonoBehaviour
 
     [Header("References")]
     public Camera mainCamera; // Assign this in the Inspector
+    public Slider dashCooldownSlider;
 
     private Vector2 moveInput;
     private CharacterController controller;
@@ -38,6 +40,13 @@ public class Movement : MonoBehaviour
         dashSpeed = StatManager.Instance.baseStats.dashSpeed;
         dashDuration = StatManager.Instance.baseStats.dashLength;
         dashCooldown = StatManager.Instance.baseStats.dashCooldown;
+
+        if (dashCooldownSlider != null)
+        {
+            dashCooldownSlider.maxValue = dashCooldown;
+            dashCooldownSlider.value = dashCooldown; // Start full
+        }
+
     }
 
     void OnEnable()
@@ -57,6 +66,12 @@ public class Movement : MonoBehaviour
     void Update()
     {
         dashCooldownTimer -= Time.deltaTime;
+
+        if (dashCooldownSlider != null)
+        {
+            dashCooldownSlider.value = Mathf.Clamp(dashCooldown - dashCooldownTimer, 0f, dashCooldown);
+        }
+
 
         Vector3 moveDirection = GetMoveDirection();
 
