@@ -42,7 +42,7 @@ public class SwarmEnemy : MonoBehaviour
             if (damageTimer <= 0f)
             {
                 cachedPlayerHealth.TakeDamage(contactDamage);
-                Debug.Log($"Enemy damaged player for {contactDamage} (sustained)");
+                Debug.Log($"Enemy damaged player for {contactDamage} (sustained) {cachedPlayerHealth.currentHealth}");
 
                 damageTimer = damageCooldown;
             }

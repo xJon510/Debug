@@ -4,6 +4,7 @@ using UnityEngine.UI;
 public class PlayerHealth : MonoBehaviour
 {
     public float maxHealth = 100f;
+    public float armor = 0f;
     public float currentHealth;
 
     [Header("UI")]
@@ -13,6 +14,7 @@ public class PlayerHealth : MonoBehaviour
     {
         currentHealth = StatManager.Instance.baseStats.health;
         maxHealth = StatManager.Instance.baseStats.health;
+        armor = StatManager.Instance.baseStats.armor;
 
         if (healthSlider != null)
         {
@@ -24,7 +26,10 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(float amount)
     {
-        currentHealth -= amount;
+        float armorTotal = Mathf.Clamp(armor, 0f, 80f);         // Cap Armor at 80%
+        float damageTaken = amount * (1f - armor / 100f);
+
+        currentHealth -= damageTaken;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
         if (healthSlider != null)
@@ -32,7 +37,7 @@ public class PlayerHealth : MonoBehaviour
             healthSlider.value = currentHealth;
         }
 
-        Debug.Log($"Player took {amount} damage! Current HP: {currentHealth}");
+        Debug.Log($"Player took {damageTaken} damage! Current HP: {currentHealth}");
 
         if (currentHealth <= 0f)
         {

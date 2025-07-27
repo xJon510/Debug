@@ -3,6 +3,8 @@ using TMPro;
 
 public class EquipmentStatListHandler : MonoBehaviour
 {
+    public static EquipmentStatListHandler Instance;
+
     [Header("UI Text References (Match Stat Order)")]
     public TMP_Text healthText;
     public TMP_Text moveSpeedText;
@@ -27,6 +29,11 @@ public class EquipmentStatListHandler : MonoBehaviour
         UpdateStatUI();
     }
 
+    void Awake()
+    {
+        Instance = this;
+    }
+
     public void UpdateStatUI()
     {
         var stats = StatManager.Instance.baseStats;
@@ -39,7 +46,7 @@ public class EquipmentStatListHandler : MonoBehaviour
 
         fireRateText.text = $"Fire Rate: {stats.fireRate}";
         damageText.text = $"Damage: {stats.damage}";
-        critChanceText.text = $"Crit Chance: {stats.critChance * 100f}%";
+        critChanceText.text = $"Crit Chance: {stats.critChance}%";
         critMultiplierText.text = $"Crit Multiplier: {stats.critMultiplier}x";
 
         bulletCountText.text = $"Bullet Count: {stats.bulletCount}";

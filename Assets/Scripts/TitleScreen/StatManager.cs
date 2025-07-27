@@ -5,6 +5,7 @@ using UnityEngine;
 public class StatBlock
 {
     public float health = 10f;
+    public float armor = 0f;
     public float moveSpeed = 10f;
     public float dashSpeed = 40f;
     public float dashLength = 0.2f;

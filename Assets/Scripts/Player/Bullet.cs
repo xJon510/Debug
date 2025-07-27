@@ -5,6 +5,8 @@ public class Bullet : MonoBehaviour
     public float speed = 20f;
     public float lifespan = 2f;
     public float damage = 1f;
+    public float critChance = 0f;
+    public float critMultiplier = 2f;
     public float knockback = 0f;
 
     public int bulletPierce = 0; // How many enemies it can pierce through
@@ -23,6 +25,8 @@ public class Bullet : MonoBehaviour
         damage = StatManager.Instance.baseStats.damage;
         knockback = StatManager.Instance.baseStats.knockback;
         lifespan = StatManager.Instance.baseStats.bulletRange / 20;
+        critChance = StatManager.Instance.baseStats.critChance;
+        critMultiplier = StatManager.Instance.baseStats.critMultiplier;
     }
 
     private void Update()
@@ -48,7 +52,9 @@ public class Bullet : MonoBehaviour
         {
             if (other.TryGetComponent(out SwarmEnemy enemy))
             {
-                enemy.TakeDamage(damage);
+                int critTier;
+                float finalDamage = CalculateCritDamage(out critTier);
+                enemy.TakeDamage(finalDamage);
 
                 if (damagePopupPrefab != null)
                 {
@@ -64,7 +70,19 @@ public class Bullet : MonoBehaviour
                     local.z = 0f;
                     popup.transform.localPosition = local;
 
-                    popup.GetComponent<DamagePopup>().Setup(damage);
+                    Color critColor = Color.white;
+
+                    switch (critTier)
+                    {
+                        case 0: critColor = Color.white; break;
+                        case 1: critColor = Color.yellow; break;
+                        case 2: critColor = new Color(1f, 0.5f, 0f); break; // orange
+                        case 3: critColor = Color.red; break;
+                        case 4: critColor = new Color(0.7f, 0f, 1f); break; // purple
+                        default: critColor = Color.pink; break; // mega crit
+                    }
+
+                    popup.GetComponent<DamagePopup>().Setup(finalDamage, critColor);
                 }
 
                 Rigidbody enemyRb = enemy.GetComponent<Rigidbody>();
@@ -100,5 +118,23 @@ public class Bullet : MonoBehaviour
     private void ReturnToPool()
     {
         BulletPoolManager.Instance.ReturnBullet(gameObject);
+    }
+
+    private float CalculateCritDamage(out int critTier)
+    {
+        int guaranteedCrits = Mathf.FloorToInt(critChance / 100f);
+        float extraCritChance = (critChance % 100f) / 100f;
+
+        // RNG for extra tier
+        if (Random.value < extraCritChance)
+        {
+            guaranteedCrits++;
+        }
+
+        critTier = guaranteedCrits;
+
+        // Multiply base damage with crit tier scaling
+        float finalDamage = damage * (1f + guaranteedCrits * (critMultiplier - 1f));
+        return finalDamage;
     }
 }

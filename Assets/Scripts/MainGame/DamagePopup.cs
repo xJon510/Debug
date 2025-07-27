@@ -16,9 +16,10 @@ public class DamagePopup : MonoBehaviour
         canvasGroup = GetComponent<CanvasGroup>();
     }
 
-    public void Setup(float damageAmount)
+    public void Setup(float damageAmount, Color textColor)
     {
         damageText.text = damageAmount.ToString("F0");
+        damageText.color = textColor;
     }
 
     void Update()
