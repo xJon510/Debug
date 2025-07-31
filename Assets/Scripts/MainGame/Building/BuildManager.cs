@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -6,21 +7,30 @@ public class BuildManager : MonoBehaviour
     public static BuildManager Instance;
 
     [Header("Current Selection")]
-    public GameObject selectedPrefab;     // set when player clicks a UI button
-    private GameObject ghostObject;       // transparent preview while placing
+    private BuildingData selectedBuilding;    // set when player clicks a UI button
+    private GameObject ghostObject;           // transparent preview while placing
 
     [Header("Placement Settings")]
     public LayerMask groundMask;
     public float cellSize = 1f;
+
+    public int rotation = 0; // 0=default, 1=90, 2=180, 3=270
 
     private void Awake()
     {
         Instance = this;
     }
 
+    private void OnEnable()
+    {
+        InputAction rotateAction = new InputAction(binding: "<Keyboard>/r");
+        rotateAction.performed += ctx => RotateBuilding();
+        rotateAction.Enable();
+    }
+
     private void Update()
     {
-        if (selectedPrefab == null) return;
+        if (selectedBuilding == null) return;
 
         // Raycast mouse to ground
         Vector2 mouseScreen = Mouse.current.position.ReadValue();
@@ -28,31 +38,76 @@ public class BuildManager : MonoBehaviour
 
         if (Physics.Raycast(ray, out RaycastHit hit, 100f, groundMask))
         {
-            // Snap to grid
-            int x = Mathf.RoundToInt(hit.point.x / cellSize);
-            int z = Mathf.RoundToInt(hit.point.z / cellSize);
-            Vector3 snappedPos = new Vector3(x * cellSize, 1, z * cellSize);
+            // Base snapped cell
+            float x = Mathf.Floor(hit.point.x / cellSize);
+            float z = Mathf.Floor(hit.point.z / cellSize);
 
-            // If ghost doesn't exist yet, spawn one
+            // Copy the size from the selected building
+            Vector2Int size = selectedBuilding.size;
+
+            // If rotated 90° or 270°, swap width/height
+            if (rotation % 2 == 1)
+                size = new Vector2Int(size.y, size.x);
+
+            // Anchor: center of hovered cell
+            float half = cellSize / 2f;
+            Vector3 snappedPos = new Vector3(x * cellSize + half, 1, z * cellSize + half);
+
+            Vector3 placementOffset = new Vector3(0, 0, 0);
+
+            if (size.x == 2 && size.y == 1 || size.x == 1 && size.y == 2) // 2x1
+            {
+                switch (rotation % 4)
+                {
+                    case 0: placementOffset = new Vector3(cellSize / 2f, 0, 0); break; // X + 1.25
+                    case 1: placementOffset = new Vector3(0, 0, cellSize / 2f); break; // Z + 1.25
+                    case 2: placementOffset = new Vector3(-cellSize / 2f, 0, 0); break; // X - 1.25
+                    case 3: placementOffset = new Vector3(0, 0, -cellSize / 2f); break; // Z - 1.25
+                }
+            }
+            else if (size.x == 2 && size.y == 2) // 2x2
+            {
+                switch (rotation % 4)
+                {
+                    case 0: placementOffset = new Vector3(cellSize / 2f, 0, cellSize / 2f); break; // X+1.25, Z+1.25
+                    case 1: placementOffset = new Vector3(-cellSize / 2f, 0, cellSize / 2f); break; // X-1.25, Z+1.25
+                    case 2: placementOffset = new Vector3(-cellSize / 2f, 0, -cellSize / 2f); break; // X-1.25, Z-1.25
+                    case 3: placementOffset = new Vector3(cellSize / 2f, 0, -cellSize / 2f); break; // X+1.25, Z-1.25
+                }
+            }
+
             if (ghostObject == null)
             {
-                ghostObject = Instantiate(selectedPrefab, snappedPos, Quaternion.identity);
+                ghostObject = Instantiate(selectedBuilding.prefab, snappedPos, Quaternion.identity);
                 SetGhostMaterial(ghostObject);
             }
             else
             {
-                ghostObject.transform.position = snappedPos;
+                ghostObject.transform.position = snappedPos + placementOffset;
             }
 
-            // Place on left click
-            if (Mouse.current.leftButton.wasPressedThisFrame)
+            ghostObject.transform.rotation = Quaternion.Euler(0, rotation * 90f, 0);
+
+            // Occupancy check (pass rotated size + rotation)
+            bool occupied = GridManager.Instance.AreCellsOccupied(snappedPos, selectedBuilding.size, rotation);
+            SetGhostColor(occupied ? Color.red : Color.green);
+
+            if (!occupied && Mouse.current.leftButton.wasPressedThisFrame)
             {
-                Instantiate(selectedPrefab, snappedPos, Quaternion.identity);
+                Instantiate(selectedBuilding.prefab, snappedPos + placementOffset, Quaternion.Euler(0, rotation * 90f, 0));
+                GridManager.Instance.OccupyCells(snappedPos, selectedBuilding.size, rotation);
+
                 Destroy(ghostObject);
                 ghostObject = null;
-                selectedPrefab = null; // reset selection
+                selectedBuilding = null;
             }
         }
+    }
+
+    public void SelectBuilding(BuildingData data)
+    {
+        selectedBuilding = data;
+        if (ghostObject != null) Destroy(ghostObject);
     }
 
     private void SetGhostMaterial(GameObject obj)
@@ -64,16 +119,20 @@ public class BuildManager : MonoBehaviour
         }
     }
 
-    public void SelectBuilding(GameObject prefab)
+    private void SetGhostColor(Color c)
     {
-        // Called from UI buttons
-        selectedPrefab = prefab;
+        foreach (var r in ghostObject.GetComponentsInChildren<Renderer>())
+        {
+            r.material.color = new Color(c.r, c.g, c.b, 0.5f); // semi-transparent
+        }
+    }
 
-        // cleanup old ghost if any
+    private void RotateBuilding()
+    {
+        rotation = (rotation + 1) % 4; // cycle 0-3
         if (ghostObject != null)
         {
-            Destroy(ghostObject);
-            ghostObject = null;
+            ghostObject.transform.rotation = Quaternion.Euler(0, rotation * 90f, 0);
         }
     }
 }
