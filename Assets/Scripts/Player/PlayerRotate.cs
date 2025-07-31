@@ -9,6 +9,7 @@ public class PlayerRotate : MonoBehaviour
     [Header("References")]
     public Camera mainCamera; // Assign your main camera in Inspector
     public LayerMask groundMask; // Set this to the layer your ground is on
+    public LayerMask buildingsMask;
 
     void Update()
     {

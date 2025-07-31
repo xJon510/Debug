@@ -17,6 +17,7 @@ public class GridManager : MonoBehaviour
     public InputActionReference clickAction; // drag "UI/Click" here in inspector
 
     private HashSet<Vector2Int> occupiedCells = new HashSet<Vector2Int>();
+    private HashSet<Vector2Int> playerBlockedCells = new HashSet<Vector2Int>();
 
     private void Awake()
     {
@@ -102,7 +103,7 @@ public class GridManager : MonoBehaviour
 
         foreach (var cell in GetOccupiedCells(baseCell, size, rotation))
         {
-            if (occupiedCells.Contains(cell))
+            if (occupiedCells.Contains(cell) || playerBlockedCells.Contains(cell))
                 return true;
         }
         return false;
@@ -159,4 +160,49 @@ public class GridManager : MonoBehaviour
         }
     }
 
+    public bool AreCellsInBounds(Vector3 worldPos, Vector2Int size, int rotation)
+    {
+        Vector2Int baseCell = WorldToCell(worldPos);
+
+        foreach (var cell in GetOccupiedCells(baseCell, size, rotation))
+        {
+            if (cell.x < -width / 2 || cell.y < -height / 2 || cell.x >= width / 2 || cell.y >= height / 2)
+                return false; // out of bounds
+
+            // --- Beveled corner checks ---
+            int maxX = width / 2 - 1;
+            int maxY = height / 2 - 1;
+            int minX = -width / 2;
+            int minY = -height / 2;
+
+            // Top-right corner (maxX, maxY)
+            if ((cell.x == maxX && cell.y >= maxY - 1) || (cell.y == maxY && cell.x >= maxX - 1))
+                return false;
+
+            // Top-left corner (minX, maxY)
+            if ((cell.x == minX && cell.y >= maxY - 1) || (cell.y == maxY && cell.x <= minX + 1))
+                return false;
+
+            // Bottom-right corner (maxX, minY)
+            if ((cell.x == maxX && cell.y <= minY + 1) || (cell.y == minY && cell.x >= maxX - 1))
+                return false;
+
+            // Bottom-left corner (minX, minY)
+            if ((cell.x == minX && cell.y <= minY + 1) || (cell.y == minY && cell.x <= minX + 1))
+                return false;
+
+            // --- Central core (6x6) block ---
+            // covers coordinates from -3 .. +2 (inclusive) in both X and Y
+            if (cell.x >= -3 && cell.x <= 2 && cell.y >= -3 && cell.y <= 2)
+                return false;
+        }
+        return true;
+    }
+
+    public void UpdatePlayerBlockedCells(IEnumerable<Vector2Int> newCells)
+    {
+        playerBlockedCells.Clear();
+        foreach (var c in newCells)
+            playerBlockedCells.Add(c);
+    }
 }

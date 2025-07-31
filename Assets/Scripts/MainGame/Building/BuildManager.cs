@@ -16,6 +16,9 @@ public class BuildManager : MonoBehaviour
 
     public int rotation = 0; // 0=default, 1=90, 2=180, 3=270
 
+    private InputAction cancelAction;
+    private bool justPlaced = false;
+
     private void Awake()
     {
         Instance = this;
@@ -23,14 +26,38 @@ public class BuildManager : MonoBehaviour
 
     private void OnEnable()
     {
+        // Rotate Action
         InputAction rotateAction = new InputAction(binding: "<Keyboard>/r");
         rotateAction.performed += ctx => RotateBuilding();
         rotateAction.Enable();
+
+        // Cancel action (esc + right click mapped in InputActions)
+        cancelAction = new InputAction(binding: "<Keyboard>/escape");
+        cancelAction.AddBinding("<Mouse>/rightButton");
+        cancelAction.performed += ctx => CancelPlacement();
+        cancelAction.Enable();
+    }
+
+    private void OnDisable()
+    {
+        cancelAction?.Disable();
     }
 
     private void Update()
     {
         if (selectedBuilding == null) return;
+
+        // --- UI panel cancel check ---
+        float mouseX = Mouse.current.position.ReadValue().x;
+        if (mouseX <= 450f) // within 450px of the left side
+        {
+            if (ghostObject != null)
+            {
+                Destroy(ghostObject);
+                ghostObject = null;
+            }
+            return; // don’t process placement
+        }
 
         // Raycast mouse to ground
         Vector2 mouseScreen = Mouse.current.position.ReadValue();
@@ -89,17 +116,27 @@ public class BuildManager : MonoBehaviour
             ghostObject.transform.rotation = Quaternion.Euler(0, rotation * 90f, 0);
 
             // Occupancy check (pass rotated size + rotation)
+            bool inBounds = GridManager.Instance.AreCellsInBounds(snappedPos, selectedBuilding.size, rotation);
             bool occupied = GridManager.Instance.AreCellsOccupied(snappedPos, selectedBuilding.size, rotation);
-            SetGhostColor(occupied ? Color.red : Color.green);
 
-            if (!occupied && Mouse.current.leftButton.wasPressedThisFrame)
+            bool canPlace = inBounds && !occupied;
+            SetGhostColor(canPlace ? Color.green : Color.red);
+
+            if (canPlace && Mouse.current.leftButton.wasPressedThisFrame)
             {
-                Instantiate(selectedBuilding.prefab, snappedPos + placementOffset, Quaternion.Euler(0, rotation * 90f, 0));
+                GameObject placed = Instantiate(selectedBuilding.prefab, snappedPos + placementOffset, Quaternion.Euler(0, rotation * 90f, 0));
+
+                Collider rootCol = placed.GetComponent<Collider>();
+                if (rootCol != null)
+                    rootCol.enabled = true;
+
                 GridManager.Instance.OccupyCells(snappedPos, selectedBuilding.size, rotation);
 
                 Destroy(ghostObject);
                 ghostObject = null;
                 selectedBuilding = null;
+
+                justPlaced = true; // flag this frame
             }
         }
     }
@@ -134,5 +171,23 @@ public class BuildManager : MonoBehaviour
         {
             ghostObject.transform.rotation = Quaternion.Euler(0, rotation * 90f, 0);
         }
+    }
+
+    private void CancelPlacement()
+    {
+        if (ghostObject != null)
+        {
+            Destroy(ghostObject);
+            ghostObject = null;
+        }
+        selectedBuilding = null;
+    }
+
+    public bool IsPlacing() => selectedBuilding != null || justPlaced;
+
+    private void LateUpdate()
+    {
+        // Clear flag at end of frame
+        justPlaced = false;
     }
 }
