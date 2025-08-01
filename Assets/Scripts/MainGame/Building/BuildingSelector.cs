@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 
 public class BuildingSelector : MonoBehaviour
 {
@@ -13,6 +14,9 @@ public class BuildingSelector : MonoBehaviour
 
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
+            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+                return;
+
             Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
 
             if (Physics.Raycast(ray, out RaycastHit hit, 100f, buildingMask))

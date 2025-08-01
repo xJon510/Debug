@@ -8,8 +8,7 @@ public class BitMiner : Building
     public int upgradeCost = 200;
     public int upgradeTime = 5;
     [TextArea]
-    public string description =
-        "An automated process that digs into the digital substrate, extracting stray \"bits\" from memory leaks. Essential for fueling your defenses against the Bugs.";
+    public string description = "An automated process that digs into the digital substrate, extracting stray \"bits\" from memory leaks. Essential for fueling your defenses against the Bugs.";
 
     private CanvasGroup infoCanvas;
 

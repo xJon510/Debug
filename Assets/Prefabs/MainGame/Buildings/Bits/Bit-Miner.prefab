@@ -348,8 +348,8 @@ MonoBehaviour:
   upgradeCost: 200
   upgradeTime: 5
   description: An automated process that digs into the digital substrate, extracting
-    stray 'bits' from memory leaks.
-  infoPanel: {fileID: 3745871182540531186, guid: ee4406babb635104e934260eed239058, type: 3}
+    stray "bits" from memory leaks. Essential for fueling your defenses against the
+    Bugs.
 --- !u!1 &5196162219811220275
 GameObject:
   m_ObjectHideFlags: 0

@@ -130,6 +130,11 @@ public class BuildManager : MonoBehaviour
                 if (rootCol != null)
                     rootCol.enabled = true;
 
+                // Generic call to OnPlaced
+                Building building = placed.GetComponent<Building>();
+                if (building != null)
+                    building.OnPlaced();
+
                 GridManager.Instance.OccupyCells(snappedPos, selectedBuilding.size, rotation);
 
                 Destroy(ghostObject);
