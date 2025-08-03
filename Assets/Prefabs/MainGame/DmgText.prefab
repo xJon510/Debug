@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4349142507509095407}
   - component: {fileID: 4424036959362132254}
   - component: {fileID: 2762672291067529385}
+  - component: {fileID: 5135604465877366144}
   m_Layer: 5
   m_Name: DmgText
   m_TagString: Untagged
@@ -153,3 +154,15 @@ MonoBehaviour:
   lifetime: 1
   floatSpeed: 2
   fadeSpeed: 2
+--- !u!114 &5135604465877366144
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6134469702647731616}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84c4bd83e0ef7e047bf5227d3b1a99ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

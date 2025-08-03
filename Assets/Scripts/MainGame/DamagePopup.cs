@@ -18,7 +18,19 @@ public class DamagePopup : MonoBehaviour
 
     public void Setup(float damageAmount, Color textColor)
     {
-        damageText.text = damageAmount.ToString("F0");
+        if (damageAmount % 1 == 0) // whole number
+        {
+            damageText.text = damageAmount.ToString("F0"); // no decimals
+        }
+        else if (damageAmount < 10f) // non-whole under 10
+        {
+            damageText.text = damageAmount.ToString("F1"); // one decimal
+        }
+        else // non-whole 10 or higher
+        {
+            damageText.text = damageAmount.ToString("F0"); // round to int
+        }
+
         damageText.color = textColor;
     }
 

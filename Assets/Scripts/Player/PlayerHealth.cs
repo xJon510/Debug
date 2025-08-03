@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -9,6 +10,9 @@ public class PlayerHealth : MonoBehaviour
 
     [Header("UI")]
     public Slider healthSlider;
+    public TMP_Text healthText;
+    public TMP_Text healthTextHolder;
+    public TMP_Text healthTextVisible;
 
     void Start()
     {
@@ -20,6 +24,13 @@ public class PlayerHealth : MonoBehaviour
         {
             healthSlider.maxValue = maxHealth;
             healthSlider.value = currentHealth;
+        }
+
+        if (healthText != null)
+        {
+            healthText.text = $"{currentHealth}/{maxHealth}";
+            healthTextHolder.text = $"{currentHealth}/{maxHealth}";
+            healthTextVisible.text = $"{currentHealth}/{maxHealth}";
         }
 
     }
@@ -35,6 +46,9 @@ public class PlayerHealth : MonoBehaviour
         if (healthSlider != null)
         {
             healthSlider.value = currentHealth;
+            healthText.text = $"{currentHealth}/{maxHealth}";
+            healthTextHolder.text = $"{currentHealth}/{maxHealth}";
+            healthTextVisible.text = $"{currentHealth}/{maxHealth}";
         }
 
         Debug.Log($"Player took {damageTaken} damage! Current HP: {currentHealth}");

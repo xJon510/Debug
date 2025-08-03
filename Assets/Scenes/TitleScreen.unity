@@ -1633,8 +1633,8 @@ MonoBehaviour:
     dashLength: 0.1
     dashCooldown: 5
     fireRate: 0.5
-    damage: 2
-    critChance: 50
+    damage: 1
+    critChance: 0
     critMultiplier: 2
     bulletCount: 0
     bulletPierce: 0

@@ -7,6 +7,7 @@ public class EquipmentStatListHandler : MonoBehaviour
 
     [Header("UI Text References (Match Stat Order)")]
     public TMP_Text healthText;
+    public TMP_Text armorText;
     public TMP_Text moveSpeedText;
     public TMP_Text dashSpeedText;
     public TMP_Text dashLengthText;
@@ -39,9 +40,10 @@ public class EquipmentStatListHandler : MonoBehaviour
         var stats = StatManager.Instance.baseStats;
 
         healthText.text = $"Health: {stats.health}";
-        moveSpeedText.text = $"Move Speed: {stats.moveSpeed}";
-        dashSpeedText.text = $"Dash Speed: {stats.dashSpeed}";
-        dashLengthText.text = $"Dash Length: {stats.dashLength}s";
+        armorText.text = $"Armor: {stats.armor}";
+        moveSpeedText.text = $"Move Speed: {stats.moveSpeed * 10}";
+        dashSpeedText.text = $"Dash Speed: {stats.dashSpeed * 10}";
+        dashLengthText.text = $"Dash Length: {stats.dashLength * 10}s";
         dashCooldownText.text = $"Dash Cooldown: {stats.dashCooldown}s";
 
         fireRateText.text = $"Fire Rate: {stats.fireRate}";
@@ -51,7 +53,7 @@ public class EquipmentStatListHandler : MonoBehaviour
 
         bulletCountText.text = $"Bullet Count: {stats.bulletCount}";
         bulletPierceText.text = $"Bullet Pierce: {stats.bulletPierce}";
-        bulletRangeText.text = $"Bullet Range: {stats.bulletRange}";
+        bulletRangeText.text = $"Bullet Range: {stats.bulletRange * 10}";
         knockbackText.text = $"Knockback: {stats.knockback}";
 
         cooldownReductionText.text = $"Cooldown Reduction: {stats.cooldownReduction * 100f}%";

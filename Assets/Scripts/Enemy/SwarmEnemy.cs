@@ -62,6 +62,8 @@ public class SwarmEnemy : MonoBehaviour
     void Die()
     {
         // Placeholder: just destroy for now
+        GetComponent<ExpReward>()?.GrantExp();
+
         Destroy(gameObject);
     }
 

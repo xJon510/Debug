@@ -27,6 +27,7 @@ public class StatHandler : MonoBehaviour
         {
             playerHealth.maxHealth = stats.health;
             playerHealth.RefreshUI(); // Add this helper in PlayerHealth below
+            playerHealth.armor = stats.armor;
         }
 
         if (movement != null)
