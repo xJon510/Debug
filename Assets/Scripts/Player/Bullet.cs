@@ -50,7 +50,7 @@ public class Bullet : MonoBehaviour
 
         if (other.gameObject.layer == LayerMask.NameToLayer("Enemy"))
         {
-            if (other.TryGetComponent(out SwarmEnemy enemy))
+            if (other.TryGetComponent(out Tier1Worm enemy))
             {
                 int critTier;
                 float finalDamage = CalculateCritDamage(out critTier);
