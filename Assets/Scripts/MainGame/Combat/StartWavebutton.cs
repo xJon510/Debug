@@ -34,8 +34,21 @@ public class StartWaveButton : MonoBehaviour
         else
             Debug.LogWarning("BuildingSelection script not assigned!");
 
+        // Reset Player HP
+        PlayerHealth health = player.GetComponent<PlayerHealth>();
+        if (health != null)
+        {
+            health.currentHealth = health.maxHealth;
+            health.RefreshUI();
+            Debug.Log($"[StartWave] Player health reset to {health.currentHealth}/{health.maxHealth}");
+        }
+        else
+        {
+            Debug.LogWarning("PlayerHealth script not found on player object!");
+        }
         // Start the wave
         EnemyManager.Instance.BeginWaves();
+        WaveManager.Instance.currentWave = 0;
     }
 
     public void EndWave()

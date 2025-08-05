@@ -46,6 +46,8 @@ public class StatManager : MonoBehaviour
     public void ModifyStat(Action<StatBlock> change)
     {
         change(baseStats);
+        Debug.Log($"[StatManager] Stats modified -> Health: {baseStats.health}, Damage: {baseStats.damage}, MoveSpeed: {baseStats.moveSpeed}");
         OnStatsChanged?.Invoke();
+        Debug.Log("[StatManager] OnStatsChanged invoked");
     }
 }

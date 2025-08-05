@@ -1,12 +1,18 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 
 public class EnemyManager : MonoBehaviour
 {
     public static EnemyManager Instance; // quick singleton
     public WaveManager waveManager;
     public StartWaveButton startWaveButton;
+
+    public TMP_Text enemyCountText;
+    public TMP_Text enemyCountHolder;
+    public TMP_Text enemyCountVisible;
+
 
     private List<GameObject> pooledEnemies = new List<GameObject>();
     private int activeEnemies = 0;
@@ -21,6 +27,12 @@ public class EnemyManager : MonoBehaviour
     public void BeginWaves()
     {
         StartCoroutine(RunWaves());
+
+        WaveConfig config = waveManager.waves[0];
+
+        enemyCountText.text = $"{config.enemyCount} REMAINING";
+        enemyCountHolder.text = $"{config.enemyCount} REMAINING";
+        enemyCountVisible.text = $"{config.enemyCount} REMAINING";
     }
 
     private IEnumerator RunWaves()
@@ -34,6 +46,10 @@ public class EnemyManager : MonoBehaviour
 
             // Ensure enough pooled enemies exist
             yield return StartCoroutine(PreparePool(config.enemyPrefab, config.enemyCount));
+
+            enemyCountText.text = $"{config.enemyCount} REMAINING";
+            enemyCountHolder.text = $"{config.enemyCount} REMAINING";
+            enemyCountVisible.text = $"{config.enemyCount} REMAINING";
 
             // Spawn wave
             yield return StartCoroutine(waveManager.SpawnWaveCoroutine(config));
@@ -94,5 +110,8 @@ public class EnemyManager : MonoBehaviour
     {
         enemy.SetActive(false);
         activeEnemies--;
+        enemyCountText.text = $"{activeEnemies} REMAINING";
+        enemyCountHolder.text = $"{activeEnemies} REMAINING";
+        enemyCountVisible.text = $"{activeEnemies} REMAINING";
     }
 }

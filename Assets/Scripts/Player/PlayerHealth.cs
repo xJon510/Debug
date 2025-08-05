@@ -72,5 +72,12 @@ public class PlayerHealth : MonoBehaviour
             healthSlider.maxValue = maxHealth;
             healthSlider.value = currentHealth;
         }
+
+        if (healthText != null)
+        {
+            healthText.text = $"{currentHealth}/{maxHealth}";
+            healthTextHolder.text = $"{currentHealth}/{maxHealth}";
+            healthTextVisible.text = $"{currentHealth}/{maxHealth}";
+        }
     }
 }

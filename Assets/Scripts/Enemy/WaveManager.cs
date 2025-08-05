@@ -1,58 +1,27 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 
 public class WaveManager : MonoBehaviour
 {
+    public static WaveManager Instance;
+
+    public TMP_Text waveCountText;
+    public TMP_Text waveCountHolder;
+    public TMP_Text waveCountVisible;
+
     public Transform[] spawnPoints;          // your 4 platforms
     public List<WaveConfig> waves;           // assign waves in inspector
-    private int currentWave = 0;
+    public int currentWave = 0;
     private int roundRobinIndex = 0;
-
-    public void StartNextWave()
-    {
-        if (currentWave < waves.Count)
-        {
-            StartCoroutine(SpawnWave(waves[currentWave]));
-            currentWave++;
-        }
-        else
-        {
-            Debug.Log("All waves completed!");
-        }
-    }
-
-    private IEnumerator SpawnWave(WaveConfig config)
-    {
-        switch (config.spawnMode)
-        {
-            case SpawnMode.Immediate:
-                SpawnEnemies(config.enemyPrefab, config.enemyCount, config);
-                break;
-
-            case SpawnMode.Staggered:
-                for (int i = 0; i < config.enemyCount; i++)
-                {
-                    SpawnEnemies(config.enemyPrefab, 1, config);
-                    yield return new WaitForSeconds(config.spawnRate);
-                }
-                break;
-
-            case SpawnMode.Burst:
-                int spawned = 0;
-                while (spawned < config.enemyCount)
-                {
-                    int group = Mathf.Min(config.burstSize, config.enemyCount - spawned);
-                    SpawnEnemies(config.enemyPrefab, group, config);
-                    spawned += group;
-                    yield return new WaitForSeconds(config.spawnRate);
-                }
-                break;
-        }
-    }
 
     public IEnumerator SpawnWaveCoroutine(WaveConfig config)
     {
+        waveCountText.text = $"Wave {currentWave + 1}";
+        waveCountHolder.text = $"Wave {currentWave + 1}";
+        waveCountVisible.text = $"Wave {currentWave + 1}";
+
         switch (config.spawnMode)
         {
             case SpawnMode.Immediate:
@@ -78,6 +47,8 @@ public class WaveManager : MonoBehaviour
                 }
                 break;
         }
+
+        currentWave++;
     }
 
     private void SpawnEnemies(GameObject prefab, int count, WaveConfig config)
