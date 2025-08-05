@@ -11,6 +11,8 @@ public class WaveManager : MonoBehaviour
     public TMP_Text waveCountHolder;
     public TMP_Text waveCountVisible;
 
+    public EnemyCategory enemyCategory;
+
     public Transform[] spawnPoints;          // your 4 platforms
     public List<WaveConfig> waves;           // assign waves in inspector
     public int currentWave = 0;
@@ -25,23 +27,21 @@ public class WaveManager : MonoBehaviour
         switch (config.spawnMode)
         {
             case SpawnMode.Immediate:
-                SpawnEnemies(config.enemyPrefab, config.enemyCount, config);
+                SpawnEnemies(config.category, config.enemyCount, config);
                 break;
-
             case SpawnMode.Staggered:
                 for (int i = 0; i < config.enemyCount; i++)
                 {
-                    SpawnEnemies(config.enemyPrefab, 1, config);
+                    SpawnEnemies(config.category, 1, config);
                     yield return new WaitForSeconds(config.spawnRate);
                 }
                 break;
-
             case SpawnMode.Burst:
                 int spawned = 0;
                 while (spawned < config.enemyCount)
                 {
                     int group = Mathf.Min(config.burstSize, config.enemyCount - spawned);
-                    SpawnEnemies(config.enemyPrefab, group, config);
+                    SpawnEnemies(config.category, group, config);
                     spawned += group;
                     yield return new WaitForSeconds(config.spawnRate);
                 }
@@ -51,8 +51,11 @@ public class WaveManager : MonoBehaviour
         currentWave++;
     }
 
-    private void SpawnEnemies(GameObject prefab, int count, WaveConfig config)
+    private void SpawnEnemies(EnemyCategory category, int count, WaveConfig config)
     {
+        GameObject prefab = EnemyManager.Instance.GetPrefabForCategory(category);
+        if (prefab == null) return;
+
         for (int i = 0; i < count; i++)
         {
             Transform spawnPoint = ChooseSpawnPoint(config);

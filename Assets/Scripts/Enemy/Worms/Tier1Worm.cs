@@ -6,8 +6,7 @@ public class Tier1Worm : MonoBehaviour
     [Header("Stats")]
     public float maxHealth = 10f;
     public float contactDamage = 1f;
-    [Range(0.1f, 1f)]
-    public float size = 1f; // 1 = normal, 0.5 = mini worm
+    public float size = 1f;
 
     private float currentHealth;
     private Transform player;
@@ -20,8 +19,6 @@ public class Tier1Worm : MonoBehaviour
 
     void Start()
     {
-        ApplySizeScaling();
-
         currentHealth = maxHealth;
 
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
@@ -59,23 +56,6 @@ public class Tier1Worm : MonoBehaviour
         }
     }
 
-    void ApplySizeScaling()
-    {
-        // Scale health down proportionally
-        maxHealth *= size;
-
-        // Scale the model
-        transform.localScale = new Vector3(size, size, size);
-
-        // Adjust BoxCollider if mini (hardcoded for 0.5 case)
-        BoxCollider col = GetComponent<BoxCollider>();
-        if (col != null && Mathf.Approximately(size, 0.5f))
-        {
-            col.center = new Vector3(0f, 2f, 0f);
-            col.size = new Vector3(1.2f, 5f, 1.2f);
-        }
-    }
-
     public void TakeDamage(float amount)
     {
         currentHealth -= amount;
@@ -90,6 +70,21 @@ public class Tier1Worm : MonoBehaviour
     {
         // Placeholder: just destroy for now
         GetComponent<ExpReward>()?.GrantExp();
+
+        // Spawn baby worms if this is a Tier1 worm
+        if (Mathf.Approximately(size, 1f) && EnemyManager.Instance != null && EnemyManager.Instance.babyWormPrefab != null)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                Vector3 spawnOffset = Random.insideUnitSphere * 0.5f;
+                spawnOffset.y = 0; // keep on ground
+                EnemyManager.Instance.GetEnemy(
+                    EnemyManager.Instance.babyWormPrefab,
+                    transform.position + spawnOffset,
+                    Quaternion.identity
+                );
+            }
+        }
 
         EnemyManager.Instance.ReturnEnemy(gameObject);
     }

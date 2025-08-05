@@ -25,11 +25,12 @@ public enum SpawnDistribution { Even, RoundRobin, Random, SingleSide, Weighted }
 // Weighted - Uses spawnWeights to determine how many enemies spawn at each point
 //        Example - P1 = 50%, p2 = 25%, P3 = 15%, P4 = 10%
 
+public enum EnemyCategory { Worms, Trojans, Spyware, Ransomware }
 
 [System.Serializable]
 public class WaveConfig
 {
-    public GameObject enemyPrefab;   // which enemy to spawn
+    public EnemyCategory category;
     public int enemyCount = 10;      // total enemies
     public SpawnMode spawnMode = SpawnMode.Immediate;
     public float spawnRate = 1f;     // time between spawns (stagger/burst)

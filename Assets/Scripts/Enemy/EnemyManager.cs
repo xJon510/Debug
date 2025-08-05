@@ -13,8 +13,14 @@ public class EnemyManager : MonoBehaviour
     public TMP_Text enemyCountHolder;
     public TMP_Text enemyCountVisible;
 
+    [Header("Enemy Prefabs")]
+    public GameObject babyWormPrefab;
+    public GameObject wormTier1Prefab;
+    public GameObject trojanPrefab;
+    public GameObject spywarePrefab;
+    public GameObject ransomwarePrefab;
 
-    private List<GameObject> pooledEnemies = new List<GameObject>();
+    private Dictionary<GameObject, List<GameObject>> enemyPools = new Dictionary<GameObject, List<GameObject>>();
     private int activeEnemies = 0;
 
     void Awake()
@@ -45,7 +51,11 @@ public class EnemyManager : MonoBehaviour
             yield return new WaitForSeconds(2f);
 
             // Ensure enough pooled enemies exist
-            yield return StartCoroutine(PreparePool(config.enemyPrefab, config.enemyCount));
+            GameObject prefab = GetPrefabForCategory(config.category);
+            if (prefab != null)
+            {
+                yield return StartCoroutine(PreparePool(prefab, config.enemyCount));
+            }
 
             enemyCountText.text = $"{config.enemyCount} REMAINING";
             enemyCountHolder.text = $"{config.enemyCount} REMAINING";
@@ -65,22 +75,48 @@ public class EnemyManager : MonoBehaviour
 
     private IEnumerator PreparePool(GameObject prefab, int neededCount)
     {
+        if (!enemyPools.ContainsKey(prefab))
+            enemyPools[prefab] = new List<GameObject>();
+
+        List<GameObject> pool = enemyPools[prefab];
         int toAdd = neededCount - CountAvailable(prefab);
+
         for (int i = 0; i < toAdd; i++)
         {
             GameObject obj = Instantiate(prefab);
             obj.SetActive(false);
-            pooledEnemies.Add(obj);
-            yield return null; // spread pooling across frames
+            pool.Add(obj);
+            yield return null;
+        }
+
+        // Only prepare baby worms if this is a Tier1 worm
+        if (prefab == wormTier1Prefab && babyWormPrefab != null)
+        {
+            if (!enemyPools.ContainsKey(babyWormPrefab))
+                enemyPools[babyWormPrefab] = new List<GameObject>();
+
+            List<GameObject> babyPool = enemyPools[babyWormPrefab];
+            int babyNeeded = neededCount * 2;
+            int babyToAdd = babyNeeded - CountAvailable(babyWormPrefab);
+
+            for (int i = 0; i < babyToAdd; i++)
+            {
+                GameObject baby = Instantiate(babyWormPrefab);
+                baby.SetActive(false);
+                babyPool.Add(baby);
+                yield return null;
+            }
         }
     }
 
     private int CountAvailable(GameObject prefab)
     {
+        if (!enemyPools.ContainsKey(prefab)) return 0;
+
         int count = 0;
-        foreach (var e in pooledEnemies)
+        foreach (var e in enemyPools[prefab])
         {
-            if (!e.activeSelf && e.name.Contains(prefab.name))
+            if (!e.activeSelf)
                 count++;
         }
         return count;
@@ -88,9 +124,12 @@ public class EnemyManager : MonoBehaviour
 
     public GameObject GetEnemy(GameObject prefab, Vector3 pos, Quaternion rot)
     {
-        foreach (var e in pooledEnemies)
+        if (!enemyPools.ContainsKey(prefab))
+            enemyPools[prefab] = new List<GameObject>();
+
+        foreach (var e in enemyPools[prefab])
         {
-            if (!e.activeSelf && e.name.Contains(prefab.name))
+            if (!e.activeSelf)
             {
                 e.transform.SetPositionAndRotation(pos, rot);
                 e.SetActive(true);
@@ -99,9 +138,10 @@ public class EnemyManager : MonoBehaviour
             }
         }
 
-        // Fallback (shouldn’t hit if PreparePool ran correctly)
+        // fallback
         GameObject obj = Instantiate(prefab, pos, rot);
-        pooledEnemies.Add(obj);
+        obj.SetActive(true);
+        enemyPools[prefab].Add(obj);
         activeEnemies++;
         return obj;
     }
@@ -113,5 +153,17 @@ public class EnemyManager : MonoBehaviour
         enemyCountText.text = $"{activeEnemies} REMAINING";
         enemyCountHolder.text = $"{activeEnemies} REMAINING";
         enemyCountVisible.text = $"{activeEnemies} REMAINING";
+    }
+
+    public GameObject GetPrefabForCategory(EnemyCategory category)
+    {
+        switch (category)
+        {
+            case EnemyCategory.Worms: return wormTier1Prefab;
+            case EnemyCategory.Trojans: return trojanPrefab;
+            case EnemyCategory.Spyware: return spywarePrefab;
+            case EnemyCategory.Ransomware: return ransomwarePrefab;
+            default: return null;
+        }
     }
 }
