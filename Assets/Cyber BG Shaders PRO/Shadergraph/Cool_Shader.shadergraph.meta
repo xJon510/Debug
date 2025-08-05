@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 3cbb43eabd313b64096c60f1326b61fe
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: 625f186215c104763be7675aa2d941aa, type: 3}
+AssetOrigin:
+  serializedVersion: 1
+  productId: 327080
+  packageName: Scifi Cyber BG Shader PRO
+  packageVersion: 1.0
+  assetPath: Assets/Cyber BG Shaders PRO/Shadergraph/Cool_Shader.shadergraph
+  uploadId: 774643

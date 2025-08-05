@@ -1,0 +1,63 @@
+
+- - - - - - - - - - - - - - - - - - - - - CYBER Worm 3D (with CUSTOMIZABLE Shader)- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+This pack contains many 3D animated model of Cyber Worms.Pack comes with a customizable colorfull shader/material, You can also assign these materials to your own 3D gameobjects or use it to create new variation of centipede worm.Pack comes with all basic animation's.You can use this pack commercially.
+
+Technical Details:-
+		- Material(s) : Unity standard material, CUSTOM material (Made with Shadergraph)
+		- Model(s) : Cyber Worm
+		- Animations :7 (Walk x2, Idle, Looking, Anim_1, Anim_2, Bulging)
+		- Poly count (in Tris) :  2312
+		- Unwrapped : YES
+		- Prefab Variations : 20+
+		- Texture Size : 2048(.png) + Various
+		- Built in support : YES
+		- Comes with Custom Materials and Unity standard material's with PBR textures.
+
+Note: Some of the PBR material(s) does not support customization.Color customization and other features only avilable with material's which made with shadergraph. Customizable material's included in the folder [Assets > Cyber centipede worms > Materials > CUSTOMIZABLE]
+
+Features:-
+	- Different Scifi CYBER worm models
+	- Unique color variation's
+	- Comes with all basic animation's
+	- Customizable Materials and Meshes
+	- Create your own color variation in just clicks
+	- Best fit for Sci-fi, Fantasy, Openworld 3D games (This is upto your choice)
+	- Optimized Lowpoly model's
+	- Models comes with simple colliders
+	- PBR HQ beautifull Shaders and Materials
+	- Include many Prefab variations
+	- Mobile, AR supported
+	- 3D Model's are completely unwrapped.
+	- All nodes, materials and textures are appropriately named.
+	- Arranged pivots, well named folders
+	- Easy to use (Drag and drop)
+	- Post processing layers included
+
+Folder details:-
+
+	Materials : Where the materials for the model located.
+	
+	Meshes : Contain FBX format of the 3d model.
+	
+	Textures : Contains Textures, that are in (.PNG) file format
+	
+	(Other folders - Prefabs, Scenes)
+
+Notes:
+Support URP, HDRP, LWRP, Built-in Render Pipeline.
+This project is submitted using Built-in Render Pipeline. If you are not using Built-in Render Pipeline, you need to manually reset the shader of the model to avoid it being pink
+
+How to use:-
+	
+	Simply drag and drop the prefab to your scene and use it.
+	(Prefab(s) located under 
+	Asset > Cyber_Worm> Prefabs).
+
+..................................................................................
+
+About Me : "SR Studios Kerala", Indie Game developer & 3D-2D Artist from Alappuzha, Kerala, India
+
+Contact : srstudioskerala@gmail.com
+
+................Thank you for downloading this package................................
