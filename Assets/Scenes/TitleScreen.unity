@@ -5195,7 +5195,7 @@ GameObject:
   - component: {fileID: 268463916}
   - component: {fileID: 268463915}
   m_Layer: 5
-  m_Name: ContinueTextVisible
+  m_Name: TextVisible
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6770,7 +6770,7 @@ GameObject:
   - component: {fileID: 934245096}
   - component: {fileID: 934245095}
   m_Layer: 5
-  m_Name: StartTextVisible
+  m_Name: TextVisible
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6824,7 +6824,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967040
+    rgba: 4293066634
   m_fontColor: {r: 0, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -7708,7 +7708,7 @@ GameObject:
   - component: {fileID: 1173594371}
   - component: {fileID: 1173594370}
   m_Layer: 5
-  m_Name: SettingTextVisible
+  m_Name: TextVisible
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8466,7 +8466,7 @@ GameObject:
   - component: {fileID: 1464960404}
   - component: {fileID: 1464960403}
   m_Layer: 5
-  m_Name: EquipmentTextVisible
+  m_Name: TextVisible
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8947,7 +8947,7 @@ GameObject:
   - component: {fileID: 1741802877}
   - component: {fileID: 1741802876}
   m_Layer: 5
-  m_Name: ExitTextVisible
+  m_Name: TextVisible
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
