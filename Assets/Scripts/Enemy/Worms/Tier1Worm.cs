@@ -17,6 +17,9 @@ public class Tier1Worm : MonoBehaviour
     private float damageTimer = 0f;
     private PlayerHealth cachedPlayerHealth;
 
+    public GameObject resourcePickupPrefab;
+    public float dropHeight = 1f;
+
     void Start()
     {
         currentHealth = maxHealth;
@@ -86,6 +89,11 @@ public class Tier1Worm : MonoBehaviour
             }
         }
 
+        if (Mathf.Approximately(size, 0.5f) && resourcePickupPrefab != null)
+        {
+            DropResource();
+        }
+
         EnemyManager.Instance.ReturnEnemy(gameObject);
     }
 
@@ -110,5 +118,12 @@ public class Tier1Worm : MonoBehaviour
             playerInRange = false;
             cachedPlayerHealth = null;
         }
+    }
+
+    private void DropResource()
+    {
+        Vector3 spawnPos = transform.position;
+        spawnPos.y = dropHeight;
+        Instantiate(resourcePickupPrefab, spawnPos, Quaternion.identity); 
     }
 }
