@@ -6,6 +6,10 @@ public class BuildManager : MonoBehaviour
 {
     public static BuildManager Instance;
 
+    [Header("Resources")]
+    public BitManager bitManager;
+    public ScrapManager scrapManager;
+
     [Header("Current Selection")]
     private BuildingData selectedBuilding;    // set when player clicks a UI button
     private GameObject ghostObject;           // transparent preview while placing
@@ -119,11 +123,17 @@ public class BuildManager : MonoBehaviour
             bool inBounds = GridManager.Instance.AreCellsInBounds(snappedPos, selectedBuilding.size, rotation);
             bool occupied = GridManager.Instance.AreCellsOccupied(snappedPos, selectedBuilding.size, rotation);
 
-            bool canPlace = inBounds && !occupied;
+            // NEW: can we afford it?
+            bool affordable = CanAfford(selectedBuilding);
+
+            bool canPlace = inBounds && !occupied && affordable;
             SetGhostColor(canPlace ? Color.green : Color.red);
 
             if (canPlace && Mouse.current.leftButton.wasPressedThisFrame)
             {
+                // Safety: re-check & spend before placing
+                if (!TrySpend(selectedBuilding)) return;
+
                 GameObject placed = Instantiate(selectedBuilding.prefab, snappedPos + placementOffset, Quaternion.Euler(0, rotation * 90f, 0));
 
                 Collider rootCol = placed.GetComponent<Collider>();
@@ -194,5 +204,20 @@ public class BuildManager : MonoBehaviour
     {
         // Clear flag at end of frame
         justPlaced = false;
+    }
+
+    private bool CanAfford(BuildingData b)
+    {
+        bool okBits = (bitManager == null) || (bitManager.GetCurrentBits() >= b.costBits);
+        bool okScrap = (scrapManager == null) || (scrapManager.GetCurrentScrap() >= b.costScrap);
+        return okBits && okScrap;
+    }
+
+    private bool TrySpend(BuildingData b)
+    {
+        if (!CanAfford(b)) return false;
+        if (bitManager != null && b.costBits > 0) bitManager.SpendBits(b.costBits);
+        if (scrapManager != null && b.costScrap > 0) scrapManager.SpendScrap(b.costScrap);
+        return true;
     }
 }

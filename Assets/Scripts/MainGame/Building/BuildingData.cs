@@ -5,4 +5,8 @@ public class BuildingData
 {
     public GameObject prefab;
     public Vector2Int size = Vector2Int.one; // default 1x1
+
+    [Header("Cost")]
+    public int costBits = 0;
+    public int costScrap = 0;
 }
