@@ -1,10 +1,12 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro; // if you’re using TextMeshPro
+using System;
 
 public class BitManager : MonoBehaviour
 {
     public static BitManager Instance;
+    public event Action<int> OnBitsChanged;
 
     [Header("Resource Settings")]
     [SerializeField] private int currentBits = 0;
@@ -28,6 +30,7 @@ public class BitManager : MonoBehaviour
     private void Start()
     {
         UpdateUI();
+        OnBitsChanged?.Invoke(currentBits);
     }
 
     // --- Resource Methods ---
@@ -36,12 +39,14 @@ public class BitManager : MonoBehaviour
     {
         currentBits = Mathf.Clamp(currentBits + amount, 0, maxBits);
         UpdateUI();
+        OnBitsChanged?.Invoke(currentBits);
     }
 
     public void SpendBits(int amount)
     {
         currentBits = Mathf.Clamp(currentBits - amount, 0, maxBits);
         UpdateUI();
+        OnBitsChanged?.Invoke(currentBits);
     }
 
     public void SetMaxBits(int newMax, bool keepRatio = true)
@@ -59,6 +64,7 @@ public class BitManager : MonoBehaviour
             currentBits = Mathf.Clamp(currentBits, 0, maxBits);
         }
         UpdateUI();
+        OnBitsChanged?.Invoke(currentBits);
     }
 
     // --- UI Sync ---
