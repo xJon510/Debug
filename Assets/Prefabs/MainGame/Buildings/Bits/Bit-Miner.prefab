@@ -356,6 +356,54 @@ MonoBehaviour:
     upgradeCostScrap: 10
     upgradeTimeSeconds: 15
     levelNote: More efficient memory taps.
+  - capacity: 520
+    productionPerHour: 190
+    upgradeCostBits: 350
+    upgradeCostScrap: 15
+    upgradeTimeSeconds: 480
+    levelNote: More efficient memory taps.
+  - capacity: 680
+    productionPerHour: 240
+    upgradeCostBits: 600
+    upgradeCostScrap: 25
+    upgradeTimeSeconds: 720
+    levelNote: More efficient memory taps.
+  - capacity: 900
+    productionPerHour: 300
+    upgradeCostBits: 1000
+    upgradeCostScrap: 40
+    upgradeTimeSeconds: 1200
+    levelNote: More efficient memory taps.
+  - capacity: 1170
+    productionPerHour: 375
+    upgradeCostBits: 1700
+    upgradeCostScrap: 60
+    upgradeTimeSeconds: 1800
+    levelNote: More efficient memory taps.
+  - capacity: 1520
+    productionPerHour: 470
+    upgradeCostBits: 2900
+    upgradeCostScrap: 90
+    upgradeTimeSeconds: 2700
+    levelNote: More efficient memory taps.
+  - capacity: 1980
+    productionPerHour: 585
+    upgradeCostBits: 4800
+    upgradeCostScrap: 130
+    upgradeTimeSeconds: 3600
+    levelNote: More efficient memory taps.
+  - capacity: 2570
+    productionPerHour: 730
+    upgradeCostBits: 8000
+    upgradeCostScrap: 190
+    upgradeTimeSeconds: 5400
+    levelNote: More efficient memory taps.
+  - capacity: 3340
+    productionPerHour: 915
+    upgradeCostBits: 13500
+    upgradeCostScrap: 2800
+    upgradeTimeSeconds: 7200
+    levelNote: More efficient memory taps.
   currentLevel: 1
   isUpgrading: 0
   upgradeTimeRemaining: 0

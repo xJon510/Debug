@@ -197,6 +197,7 @@ public class BitMiner : Building
     public void BeginUpgradeTimer()
     {
         if (!CanUpgrade()) return;
+        Collect();
         isUpgrading = true;
         upgradeTimeRemaining = NextUpgradeTimeSeconds;
         upgradeEndTimestamp = Time.time + upgradeTimeRemaining; // absolute

@@ -22,7 +22,11 @@ public class BitMinerInfoUI : MonoBehaviour
     public TMP_Text upgradeCapacityText;       
     public TMP_Text upgradeCapacityGainText;
     public TMP_Text upgradeProductionRateText;   
-    public TMP_Text upgradeProductionGainText;    
+    public TMP_Text upgradeProductionGainText;
+
+    [Header("Buttons")]
+    [SerializeField] private Button upgradeButton;
+    [SerializeField] private Button collectButton;
 
     private BitMiner trackedMiner;
 
@@ -30,9 +34,13 @@ public class BitMinerInfoUI : MonoBehaviour
     private TMP_EllipsisAnimator ellipsis;
     private Coroutine upgradeCountdownCo;
 
+    [SerializeField] private CostHighlighter costHL;
+
     public void SetInfo(BitMiner miner)
     {
         trackedMiner = miner;
+
+        if (costHL == null) costHL = GetComponent<CostHighlighter>();
 
         if (titleText) titleText.text = miner.buildingName;
         if (levelText) levelText.text = $"Lvl {miner.currentLevel}";
@@ -55,6 +63,8 @@ public class BitMinerInfoUI : MonoBehaviour
         // Upgrade costs (split)
         if (miner.IsMaxLevel)
         {
+            if (costHL) costHL.Suspend(true);
+
             if (upgradeCostBitsText) upgradeCostBitsText.text = "MAX";
             if (upgradeCostScrapText) upgradeCostScrapText.text = "MAX";
             if (upgradeTimeText) upgradeTimeText.text = "Upgrade Time: <color=#00FFFF>—</color>";
@@ -68,6 +78,12 @@ public class BitMinerInfoUI : MonoBehaviour
         }
         else
         {
+            if (costHL)
+            {
+                costHL.Suspend(false);
+                costHL.SetCosts(miner.NextUpgradeCostBits, miner.NextUpgradeCostScrap);
+            }
+
             // Bits
             if (upgradeCostBitsText)
                 upgradeCostBitsText.text = $"{miner.NextUpgradeCostBits}";
@@ -137,11 +153,17 @@ public class BitMinerInfoUI : MonoBehaviour
         // Kick countdown if upgrading; otherwise show planned time once
         if (trackedMiner.isUpgrading)
         {
+            if (costHL) costHL.Suspend(true);
+            upgradeButton.interactable = false;
+            collectButton.interactable = false;
             StartUpgradeCountdownUI();
         }
         else
         {
             StopUpgradeCountdownUI();
+
+            upgradeButton.interactable = true;
+            collectButton.interactable = true;
 
             // Not upgrading -> show planned time (NextUpgradeTimeSeconds) once
             if (upgradeTimeText)
@@ -149,6 +171,11 @@ public class BitMinerInfoUI : MonoBehaviour
                 int secs = Mathf.Max(0, trackedMiner.NextUpgradeTimeSeconds);
                 upgradeTimeText.text = $"Upgrade Time: <color=#00FFFF>{FormatMMSS(secs)}</color>";
             }
+
+            // Force overwrite of any leftover "Upgrading" text
+            lastIsProcessing = !(
+                trackedMiner.currentStored < trackedMiner.CurrentCapacity
+            ); // flip so UpdateStateAndCapacityUI rewrites
         }
 
         // Initial state label
@@ -275,42 +302,47 @@ public class BitMinerInfoUI : MonoBehaviour
     }
 
     private System.Collections.IEnumerator UpgradeCountdownRoutine()
-{
-    // Status: Upgrading (no ellipsis during upgrade)
-    if (ellipsis) ellipsis.SetProcessing(false);
-    if (stateText) stateText.SetText("State: <color=#FFC107>Upgrading</color>");
-
-    // Costs: show plain dashes while upgrading (no color touches)
-    if (upgradeCostBitsText)  upgradeCostBitsText.text  = "-";
-    if (upgradeCostScrapText) upgradeCostScrapText.text = "-";
-
-    // Loop until miner finishes; print clean mm:ss, and snap to 00:00 at the end
-    var wait = new WaitForSeconds(0.1f);
-    while (trackedMiner != null && trackedMiner.isUpgrading)
     {
-        if (upgradeTimeText)
+        // capture which miner we started for
+        var minerRef = trackedMiner;
+
+        var wait = new WaitForSeconds(0.1f);
+        while (minerRef != null
+               && trackedMiner == minerRef              // still the same miner bound to this UI
+               && minerRef.isUpgrading)                 // and it’s still upgrading
         {
-            // clamp, then ceil; when remaining hits 0 (or below), show 00:00
-            float rem = Mathf.Max(0f, trackedMiner.upgradeTimeRemaining);
-            int secs = Mathf.CeilToInt(rem);
-            upgradeTimeText.text = $"Upgrade Time: <color=#00FFFF>{FormatMMSS(secs)}</color>";
+            // Status: Upgrading (no ellipsis during upgrade)
+            if (ellipsis) ellipsis.SetProcessing(false);
+            if (stateText) stateText.SetText("State: <color=#FFC107>Upgrading</color>");
+
+            // Costs: show plain dashes while upgrading (no color touches)
+            if (upgradeCostBitsText) upgradeCostBitsText.text = "-";
+            if (upgradeCostScrapText) upgradeCostScrapText.text = "-";
+
+            // Countdown
+            if (upgradeTimeText)
+            {
+                float rem = Mathf.Max(0f, minerRef.upgradeTimeRemaining);
+                int secs = Mathf.CeilToInt(rem);
+                upgradeTimeText.text = $"Upgrade Time: <color=#00FFFF>{FormatMMSS(secs)}</color>";
+            }
+
+            yield return wait;
         }
-        yield return wait;
+
+        // Finished or switched: refresh to whatever the current miner state is
+        if (trackedMiner != null)
+            SetInfo(trackedMiner);
+
+        upgradeCountdownCo = null;
     }
 
-    // Finished: refresh the whole panel so new level stats show cleanly
-    if (trackedMiner != null)
-        SetInfo(trackedMiner);
-
-    upgradeCountdownCo = null;
-}
-
-// mm:ss for any seconds value (00:00 when secs <= 0)
-private string FormatMMSS(int secs)
-{
-    if (secs <= 0) return "00:00";
-    int m = secs / 60;
-    int s = secs % 60;
-    return $"{m:D2}:{s:D2}";
-}
+    // mm:ss for any seconds value (00:00 when secs <= 0)
+    private string FormatMMSS(int secs)
+    {
+        if (secs <= 0) return "00:00";
+        int m = secs / 60;
+        int s = secs % 60;
+        return $"{m:D2}:{s:D2}";
+    }
 }

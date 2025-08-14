@@ -14,6 +14,7 @@ public class CostHighlighter : MonoBehaviour
     [SerializeField] Color notEnoughColor = Color.red;
 
     Coroutine _waitRoutine;
+    bool _suspended = false;   
 
     void OnEnable()
     {
@@ -29,9 +30,7 @@ public class CostHighlighter : MonoBehaviour
         ScrapManager.Instance.OnScrapChanged += CheckScrap;
 
         // Initial paint
-        CheckBits(BitManager.Instance.GetCurrentBits());
-        CheckScrap(ScrapManager.Instance.GetCurrentScrap());
-
+        Repaint();
         Debug.Log("[CostHighlighter] Subscribed & painted.");
     }
 
@@ -40,6 +39,39 @@ public class CostHighlighter : MonoBehaviour
         if (_waitRoutine != null) { StopCoroutine(_waitRoutine); _waitRoutine = null; }
         if (BitManager.Instance != null) BitManager.Instance.OnBitsChanged -= CheckBits;
         if (ScrapManager.Instance != null) ScrapManager.Instance.OnScrapChanged -= CheckScrap;
+    }
+
+    // --- Public API ---------------------------------------------------------
+
+    public void SetCosts(int newBitsCost, int newScrapCost)   
+    {
+        bitsCost = Mathf.Max(0, newBitsCost);
+        scrapCost = Mathf.Max(0, newScrapCost);
+        Repaint();
+    }
+
+    public void Suspend(bool suspended)                       
+    {
+        _suspended = suspended;
+        Repaint();
+    }
+
+    public void SetLabels(TMP_Text bits, TMP_Text scrap)      
+    {
+        bitsLabel = bits;
+        scrapLabel = scrap;
+        Repaint();
+    }
+
+    // --- Internal -----------------------------------------------------------
+
+    void Repaint()                                          
+    {
+        if (_suspended) return; // while suspended, leave whatever colors you set in the Editor
+        if (BitManager.Instance == null || ScrapManager.Instance == null) return;
+
+        CheckBits(BitManager.Instance.GetCurrentBits());
+        CheckScrap(ScrapManager.Instance.GetCurrentScrap());
     }
 
     void CheckBits(int currentBits)
