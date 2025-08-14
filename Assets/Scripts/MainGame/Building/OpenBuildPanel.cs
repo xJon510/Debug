@@ -10,6 +10,9 @@ public class OpenBuildPanel : MonoBehaviour
     public float openX = 350f;
     public float closedX = -600f;
 
+    [Header("State")]
+    public bool isOpen { get; private set; } = false;   // public read, private write
+
     // Call this from a button OnClick()
     public void OpenBuildPanelUI()
     {
@@ -19,6 +22,8 @@ public class OpenBuildPanel : MonoBehaviour
             pos.x = openX;
             buildPanelTransform.anchoredPosition = pos;
         }
+
+        isOpen = true;
     }
 
     // Call this from another button OnClick()
@@ -30,5 +35,7 @@ public class OpenBuildPanel : MonoBehaviour
             pos.x = closedX;
             buildPanelTransform.anchoredPosition = pos;
         }
+
+        isOpen = false;
     }
 }

@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro; // if you’re using TextMeshPro
 using System;
+using System.Collections.Generic;
 
 public class BitManager : MonoBehaviour
 {
@@ -15,6 +16,8 @@ public class BitManager : MonoBehaviour
     [Header("UI References")]
     [SerializeField] private Slider bitSlider;
     [SerializeField] private TMP_Text bitText; // swap with Text if not TMP
+
+    private List<BitMiner> activeMiners = new List<BitMiner>();
 
     private void Awake()
     {
@@ -31,6 +34,28 @@ public class BitManager : MonoBehaviour
     {
         UpdateUI();
         OnBitsChanged?.Invoke(currentBits);
+    }
+
+    private void Update()
+    {
+        float delta = Time.deltaTime;
+        for (int i = 0; i < activeMiners.Count; i++)
+        {
+            activeMiners[i].TickProduction(delta);
+        }
+    }
+
+    // --- Miner Registration ---
+    public void RegisterMiner(BitMiner miner)
+    {
+        if (!activeMiners.Contains(miner))
+            activeMiners.Add(miner);
+    }
+
+    public void UnregisterMiner(BitMiner miner)
+    {
+        if (activeMiners.Contains(miner))
+            activeMiners.Remove(miner);
     }
 
     // --- Resource Methods ---
@@ -85,4 +110,20 @@ public class BitManager : MonoBehaviour
     // --- Getters ---
     public int GetCurrentBits() => currentBits;
     public int GetMaxBits() => maxBits;
+
+    public int CollectAllMiners()
+    {
+        int total = 0;
+        // assuming you have a List<BitMiner> activeMiners
+        for (int i = 0; i < activeMiners.Count; i++)
+        {
+            int before = Mathf.FloorToInt(activeMiners[i].currentStored);
+            if (before > 0)
+            {
+                activeMiners[i].Collect();
+                total += before;
+            }
+        }
+        return total;
+    }
 }

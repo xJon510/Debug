@@ -5,6 +5,7 @@ using UnityEngine.EventSystems;
 public class BuildingSelector : MonoBehaviour
 {
     public LayerMask buildingMask; // assign to "Buildings" layer
+    public OpenBuildPanel buildPanel;
 
     void Update()
     {
@@ -24,6 +25,11 @@ public class BuildingSelector : MonoBehaviour
                 Building building = hit.collider.GetComponentInParent<Building>();
                 if (building != null)
                 {
+                    // Close build panel if open
+                    if (buildPanel != null && buildPanel.isOpen)
+                        buildPanel.CloseBuildPanelUI();
+
+                    // Open this building's info panel
                     building.OpenInfoPanel();
                 }
             }

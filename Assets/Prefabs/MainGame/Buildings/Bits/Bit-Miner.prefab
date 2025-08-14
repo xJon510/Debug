@@ -343,13 +343,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buildingName: Bit Miner
-  capacity: 1000
-  productionPerHour: 100
-  upgradeCost: 200
+  capacity: 300
+  productionPerHour: 9000
+  upgradeCostBits: 200
+  upgradeCostScrap: 10
   upgradeTime: 5
   description: An automated process that digs into the digital substrate, extracting
     stray "bits" from memory leaks. Essential for fueling your defenses against the
     Bugs.
+  currentStored: 0
 --- !u!1 &5196162219811220275
 GameObject:
   m_ObjectHideFlags: 0
