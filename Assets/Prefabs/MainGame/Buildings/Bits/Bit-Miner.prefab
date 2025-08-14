@@ -343,11 +343,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buildingName: Bit Miner
-  capacity: 300
-  productionPerHour: 9000
-  upgradeCostBits: 200
-  upgradeCostScrap: 10
-  upgradeTime: 5
+  levels:
+  - capacity: 200
+    productionPerHour: 90
+    upgradeCostBits: 0
+    upgradeCostScrap: 0
+    upgradeTimeSeconds: 0
+    levelNote: Base production miner.
+  - capacity: 400
+    productionPerHour: 150
+    upgradeCostBits: 200
+    upgradeCostScrap: 10
+    upgradeTimeSeconds: 15
+    levelNote: More efficient memory taps.
+  currentLevel: 1
+  isUpgrading: 0
+  upgradeTimeRemaining: 0
   description: An automated process that digs into the digital substrate, extracting
     stray "bits" from memory leaks. Essential for fueling your defenses against the
     Bugs.
